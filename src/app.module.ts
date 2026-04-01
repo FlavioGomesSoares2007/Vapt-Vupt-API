@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { ProductsModule } from './products/products.module'; 
+import { ProductsModule } from './products/products.module';
+import { StoresModule } from './stores/stores.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ProductsModule,
-
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -20,6 +20,9 @@ import { ProductsModule } from './products/products.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    StoresModule,
+    ProductsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
