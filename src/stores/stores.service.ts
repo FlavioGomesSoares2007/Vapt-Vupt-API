@@ -1,9 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { StoresEntity } from './entities/Stores.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { StoresDto } from './dto/Stores.dto';
 import * as bcrypt from 'bcrypt';
+import { StoresUpdateDto } from './dto/StoresUpdate.dto';
 @Injectable()
 export class StoresService {
   constructor(
@@ -52,6 +58,24 @@ export class StoresService {
   async seeData(id: number) {
     return await this.StoresRepositorio.findOne({
       where: { id: id },
+      relations:['products']
     });
+  }
+
+  async update(dados: StoresUpdateDto, id: number) {
+    const store = await this.StoresRepositorio.findOne({
+      where: { id: id },
+    });
+
+    if (!store) {
+      throw new NotFoundException('Loja inexistente');
+    }
+    Object.assign(store, dados);
+
+    return await this.StoresRepositorio.save(store);
+  }
+
+  async delete(id: number) {
+    return await this.StoresRepositorio.delete(id);
   }
 }
