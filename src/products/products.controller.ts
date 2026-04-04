@@ -44,15 +44,18 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('file'))
   async update(
     @Body() dados: ProductsUpdateDto,
     @Param('id', ParseIntPipe) id_product: number,
     @Req() request,
+      @UploadedFile() file: Express.Multer.File
   ) {
     return await this.productsService.update(
-      dados,
       id_product,
       request.user.sub,
+      dados,
+      file
     );
   }
 

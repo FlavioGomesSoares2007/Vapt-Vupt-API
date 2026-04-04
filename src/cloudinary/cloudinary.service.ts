@@ -7,15 +7,17 @@ import {
 import { Multer } from 'multer';
 import * as streamifier from 'streamifier';
 
-
 @Injectable()
 export class CloudinaryService {
-  uploadFile(file: any): Promise<UploadApiErrorResponse | UploadApiResponse> {
+  uploadFile(
+    file: any,
+    folder: string,
+  ): Promise<UploadApiErrorResponse | UploadApiResponse> {
     return new Promise((resolve, reject) => {
       const upload = cloudinary.uploader.upload_stream(
         {
-          folder: 'expresso_api/produtos', 
-          resource_type: 'auto',       
+          folder: `expresso_api/${folder}`,
+          resource_type: 'auto',
         },
         (error, result) => {
           if (error) return reject(error);
@@ -26,5 +28,26 @@ export class CloudinaryService {
 
       streamifier.createReadStream(file.buffer).pipe(upload);
     });
+  }
+
+  async deleteFile(
+    publicId: string,
+  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.destroy(publicId, (error, result) => {
+        if (error) {
+          throw reject(error);
+        }
+        resolve(result);
+      });
+    });
+  }
+
+  extractPublicId(url: string): string {
+    const parts = url.split('/');
+    const fileNameWithExtension = parts.pop() || ''; 
+    const folderPath = parts.slice(parts.indexOf('expresso_api')).join('/'); 
+    const publicId = `${folderPath}/${fileNameWithExtension.split('.')[0]}`;
+    return publicId;
   }
 }

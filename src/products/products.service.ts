@@ -23,7 +23,7 @@ export class ProductsService {
     id: number,
     file: Express.Multer.File,
   ) {
-    const image = await this.cloudinaryService.uploadFile(file);
+    const image = await this.cloudinaryService.uploadFile(file, 'products');
     const exists = await this.productRepositorio.findOne({
       where: { name: dados.name, id_store: { id: id } },
     });
@@ -54,22 +54,37 @@ export class ProductsService {
     });
   }
 
-  async update(dados: ProductsUpdateDto, Id_Product: number, id_store: number) {
-    const product = await this.productRepositorio.findOne({
-      where: { id: Id_Product, id_store: { id: id_store } },
-    });
+  async update(
+  id_product: number, 
+  id_store: number, 
+  dados: ProductsUpdateDto, 
+  file?: Express.Multer.File 
+) {
+  const product = await this.productRepositorio.findOne({
+    where: { id: id_product, id_store: { id: id_store } },
+  });
 
-    if (!product) {
-      throw new UnauthorizedException('Pedido inexistente');
-    }
-
-    Object.assign(product, dados);
-    return await this.productRepositorio.save(product);
+  if (!product) {
+    throw new UnauthorizedException('Produto não encontrado nesta loja');
   }
 
-  async delete(id_product: number, id_store) {
+  if (file) {
+    if (product.imageUrl) {
+      const publicId = this.cloudinaryService.extractPublicId(product.imageUrl);
+      await this.cloudinaryService.deleteFile(publicId);
+    }
+
+    const image = await this.cloudinaryService.uploadFile(file, 'products');
+    dados.imageUrl = image.secure_url;
+  }
+
+  Object.assign(product, dados);
+  return await this.productRepositorio.save(product);
+}
+
+  async delete(id_product: number, id_store:number) {
     const stores = await this.productRepositorio.findOne({
-      where: { id_store: { id: id_product }, id: id_product },
+      where: { id_store: { id: id_store }, id: id_product },
     });
 
     if (!stores) {

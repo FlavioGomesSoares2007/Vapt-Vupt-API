@@ -1,5 +1,5 @@
+import { Type } from 'class-transformer';
 import {
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
@@ -16,9 +16,14 @@ export class ProductsUpdateDto {
   @IsNumber({}, { message: 'O preço deve ser um número válido' })
   @IsPositive({ message: 'O preço deve ser maior que zero' })
   @IsOptional()
+  @Type(() => Number)
   price?: number;
 
   @IsString({ message: 'A descrição tem que ser do tipo string' })
   @IsOptional()
   description?: string;
+
+  @IsString({ message: 'A URL da imagem deve ser um texto' })
+  @IsOptional()
+  imageUrl?: string;
 }
