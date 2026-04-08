@@ -38,7 +38,7 @@ export class ProductEntity {
     nullable: false,
   })
   @JoinColumn({ name: 'id_category' })
-  category!: CategoriesEntity;
+  id_category!: CategoriesEntity;
 
   @CreateDateColumn()
   createdAt!: Date;

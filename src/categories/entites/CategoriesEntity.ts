@@ -32,6 +32,6 @@ export class CategoriesEntity {
   })
   id_store!: StoresEntity;
 
-  @OneToMany(() => ProductEntity, (prod) => prod.category)
+  @OneToMany(() => ProductEntity, (prod) => prod.id_category)
   products!: ProductEntity[];
 }

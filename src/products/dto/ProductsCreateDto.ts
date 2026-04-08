@@ -27,4 +27,8 @@ export class CreateProductsDto {
   @IsString({ message: 'A URL da imagem deve ser um texto' })
   @IsOptional()
   imageUrl?: string;
+
+  @IsNumber()
+  @Type(() => Number)
+  id_category!: number;
 }

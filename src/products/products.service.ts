@@ -1,7 +1,8 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductEntity } from './entities/productEntity';
@@ -9,54 +10,83 @@ import { Repository } from 'typeorm';
 import { CreateProductsDto } from './dto/ProductsCreateDto';
 import { ProductsUpdateDto } from './dto/ProductsUpdate';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { CategoriesEntity } from '../categories/entites/CategoriesEntity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(ProductEntity)
     private readonly productRepositorio: Repository<ProductEntity>,
+    @InjectRepository(CategoriesEntity)
+    private readonly categoryRepositorio: Repository<CategoriesEntity>,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async create(
     dados: CreateProductsDto,
-    id: number,
+    id_store: number,
     file: Express.Multer.File,
   ) {
+    // 1. Validar se a categoria pertence à loja
+    const myCategory = await this.categoryRepositorio.findOne({
+      where: {
+        id_category: dados.id_category,
+        id_store: { id: id_store },
+      },
+    });
+
+    if (!myCategory) {
+      throw new ForbiddenException(
+        'Esta categoria não existe ou não pertence à sua loja.',
+      );
+    }
+
+    // 2. Verificar duplicidade de nome
+    const exists = await this.productRepositorio.findOne({
+      where: { name: dados.name, id_store: { id: id_store } },
+    });
+
+    if (exists) {
+      throw new ConflictException(
+        `O produto "${dados.name}" já está cadastrado.`,
+      );
+    }
+
+    // 3. Upload de imagem
     const image = await this.cloudinaryService.uploadFile(
       file,
       'product',
       500,
       500,
     );
-    const exists = await this.productRepositorio.findOne({
-      where: { name: dados.name, id_store: { id: id } },
-    });
 
-    if (exists) {
-      throw new ConflictException(
-        'O produto "' + dados.name + '" já está cadastrado.',
-      );
-    }
-
-    const NewProduct = this.productRepositorio.create({
+    // 4. Salvar (Mapeando corretamente os objetos das relações)
+    const newProduct = this.productRepositorio.create({
       ...dados,
-      id_store: { id: id },
       imageUrl: image.secure_url,
+      id_store: { id: id_store } as any,
+      id_category: { id_category: dados.id_category } as any,
     });
-    return await this.productRepositorio.save(NewProduct);
+
+    return await this.productRepositorio.save(newProduct);
   }
 
-  async findAll(id: number) {
-    return await this.productRepositorio.findOne({
-      where: { id_store: { id: id } },
+  // Corrigido: .find() para retornar todos os produtos da loja
+  async findAll(id_store: number) {
+    return await this.productRepositorio.find({
+      where: { id_store: { id: id_store } },
+      relations: ['id_category'], // Traz os dados da categoria junto
     });
   }
 
   async find(id: number, id_store: number) {
-    return await this.productRepositorio.findOne({
+    const product = await this.productRepositorio.findOne({
       where: { id: id, id_store: { id: id_store } },
+      relations: ['id_category'],
     });
+
+    if (!product) throw new NotFoundException('Produto não encontrado.');
+    return product;
   }
 
   async update(
@@ -70,7 +100,22 @@ export class ProductsService {
     });
 
     if (!product) {
-      throw new UnauthorizedException('Produto não encontrado nesta loja');
+      throw new NotFoundException('Produto não encontrado nesta loja.');
+    }
+
+    // Se estiver mudando a categoria, validamos a posse antes
+    if (dados.id_category) {
+      const catExists = await this.categoryRepositorio.findOne({
+        where: { id_category: dados.id_category, id_store: { id: id_store } },
+      });
+      if (!catExists)
+        throw new ForbiddenException('Categoria destino inválida.');
+
+      // Mapeia o ID para o formato de objeto que o TypeORM espera
+      product.id_category = {
+        id_category: dados.id_category,
+      } as CategoriesEntity;
+      delete dados.id_category; // Remove do DTO para evitar conflito no Object.assign
     }
 
     if (file) {
@@ -87,7 +132,7 @@ export class ProductsService {
         500,
         500,
       );
-      dados.imageUrl = image.secure_url;
+      product.imageUrl = image.secure_url;
     }
 
     Object.assign(product, dados);
@@ -95,18 +140,19 @@ export class ProductsService {
   }
 
   async delete(id_product: number, id_store: number) {
-    const stores = await this.productRepositorio.findOne({
-      where: { id_store: { id: id_store }, id: id_product },
+    const product = await this.productRepositorio.findOne({
+      where: { id: id_product, id_store: { id: id_store } },
     });
 
-    if (!stores) {
-      throw new UnauthorizedException('Produto inexistente');
+    if (!product) {
+      throw new NotFoundException('Produto não encontrado.');
     }
-    if (stores.imageUrl) {
-      const publicId = this.cloudinaryService.extractPublicId(stores.imageUrl);
+
+    if (product.imageUrl) {
+      const publicId = this.cloudinaryService.extractPublicId(product.imageUrl);
       await this.cloudinaryService.deleteFile(publicId);
     }
 
-    return await this.productRepositorio.remove(stores);
+    return await this.productRepositorio.remove(product);
   }
 }

@@ -26,4 +26,9 @@ export class ProductsUpdateDto {
   @IsString({ message: 'A URL da imagem deve ser um texto' })
   @IsOptional()
   imageUrl?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  id_category?: number;
 }
