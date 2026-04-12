@@ -27,7 +27,6 @@ export class ProductsService {
     id_store: number,
     file: Express.Multer.File,
   ) {
-    // 1. Validar se a categoria pertence à loja
     const myCategory = await this.categoryRepositorio.findOne({
       where: {
         id_category: dados.id_category,
@@ -41,7 +40,6 @@ export class ProductsService {
       );
     }
 
-    // 2. Verificar duplicidade de nome
     const exists = await this.productRepositorio.findOne({
       where: { name: dados.name, id_store: { id: id_store } },
     });
@@ -52,7 +50,6 @@ export class ProductsService {
       );
     }
 
-    // 3. Upload de imagem
     const image = await this.cloudinaryService.uploadFile(
       file,
       'product',
@@ -60,7 +57,6 @@ export class ProductsService {
       500,
     );
 
-    // 4. Salvar (Mapeando corretamente os objetos das relações)
     const newProduct = this.productRepositorio.create({
       ...dados,
       imageUrl: image.secure_url,
@@ -71,7 +67,6 @@ export class ProductsService {
     return await this.productRepositorio.save(newProduct);
   }
 
-  // Corrigido: .find() para retornar todos os produtos da loja
   async findAll(id_store: number) {
     return await this.productRepositorio.find({
       where: { id_store: { id: id_store } },
@@ -103,7 +98,6 @@ export class ProductsService {
       throw new NotFoundException('Produto não encontrado nesta loja.');
     }
 
-    // Se estiver mudando a categoria, validamos a posse antes
     if (dados.id_category) {
       const catExists = await this.categoryRepositorio.findOne({
         where: { id_category: dados.id_category, id_store: { id: id_store } },
@@ -111,11 +105,10 @@ export class ProductsService {
       if (!catExists)
         throw new ForbiddenException('Categoria destino inválida.');
 
-      // Mapeia o ID para o formato de objeto que o TypeORM espera
       product.id_category = {
         id_category: dados.id_category,
       } as CategoriesEntity;
-      delete dados.id_category; // Remove do DTO para evitar conflito no Object.assign
+      delete dados.id_category;
     }
 
     if (file) {

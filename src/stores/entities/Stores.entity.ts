@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { ProductEntity } from '../../products/entities/productEntity';
 import { CategoriesEntity } from '../../categories/entites/CategoriesEntity';
+import { StockEntity } from '../../stock/entities/StockEntity';
 
 @Entity('stores')
 export class StoresEntity {
@@ -66,4 +67,7 @@ export class StoresEntity {
 
   @OneToMany(() => CategoriesEntity, (category) => category.id_store)
   categories!: CategoriesEntity[];
+
+  @OneToMany(()=> StockEntity, (stock)=>stock.id_stock)
+  stock!:StockEntity[]
 }

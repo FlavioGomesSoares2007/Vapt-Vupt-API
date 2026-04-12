@@ -37,7 +37,12 @@ export class StoresService {
     }
 
     if (file) {
-      const image = await this.cloudinaryService.uploadFile(file, 'stores', 500, 500);
+      const image = await this.cloudinaryService.uploadFile(
+        file,
+        'stores',
+        500,
+        500,
+      );
       dados.logoUrl = image.secure_url;
     }
 
@@ -55,13 +60,11 @@ export class StoresService {
       store: data,
     };
   }
-
   async seeData(id: number) {
     return await this.storesRepositorio.findOne({
       where: { id: id },
     });
   }
-
   async update(dados: StoresUpdateDto, id: number, file?: Express.Multer.File) {
     const store = await this.storesRepositorio.findOne({
       where: { id: id },
@@ -81,7 +84,12 @@ export class StoresService {
         await this.cloudinaryService.deleteFile(publicId);
       }
 
-      const image = await this.cloudinaryService.uploadFile(file, 'store', 500, 500);
+      const image = await this.cloudinaryService.uploadFile(
+        file,
+        'store',
+        500,
+        500,
+      );
       dados.logoUrl = image.secure_url;
     }
 
@@ -93,48 +101,51 @@ export class StoresService {
       store: data,
     };
   }
-
   async delete(id_store: number) {
-  const store = await this.storesRepositorio.findOne({
-    where: { id: id_store },
-    relations: ['products', 'categories'], 
-  });
+    const store = await this.storesRepositorio.findOne({
+      where: { id: id_store },
+      relations: ['products', 'categories'],
+    });
 
-  if (!store) throw new NotFoundException('Loja não encontrada');
+    if (!store) throw new NotFoundException('Loja não encontrada');
 
-  if (store.products && store.products.length > 0) {
-    const deleteProductsPromises = store.products
-      .filter(prod => !!prod.imageUrl)
-      .map(prod => {
-        const publicId = this.cloudinaryService.extractPublicId(prod.imageUrl!);
-        return this.cloudinaryService.deleteFile(publicId);
-      });
-    await Promise.all(deleteProductsPromises).catch(err => 
-      console.error('Erro ao deletar imagens dos produtos da loja:', err)
-    );
-  }
-
-  if (store.categories && store.categories.length > 0) {
-    const deleteCategoriesPromises = store.categories
-      .filter(cat => !!cat.imageUrl)
-      .map(cat => {
-        const publicId = this.cloudinaryService.extractPublicId(cat.imageUrl!);
-        return this.cloudinaryService.deleteFile(publicId);
-      });
-    await Promise.all(deleteCategoriesPromises).catch(err => 
-      console.error('Erro ao deletar imagens das categorias da loja:', err)
-    );
-  }
-
-  if (store.logoUrl) {
-    try {
-      const logoId = this.cloudinaryService.extractPublicId(store.logoUrl);
-      await this.cloudinaryService.deleteFile(logoId);
-    } catch (err) {
-      console.error('Erro ao deletar logo da loja:', err);
+    if (store.products && store.products.length > 0) {
+      const deleteProductsPromises = store.products
+        .filter((prod) => !!prod.imageUrl)
+        .map((prod) => {
+          const publicId = this.cloudinaryService.extractPublicId(
+            prod.imageUrl!,
+          );
+          return this.cloudinaryService.deleteFile(publicId);
+        });
+      await Promise.all(deleteProductsPromises).catch((err) =>
+        console.error('Erro ao deletar imagens dos produtos da loja:', err),
+      );
     }
-  }
 
-  return await this.storesRepositorio.remove(store);
-}
+    if (store.categories && store.categories.length > 0) {
+      const deleteCategoriesPromises = store.categories
+        .filter((cat) => !!cat.imageUrl)
+        .map((cat) => {
+          const publicId = this.cloudinaryService.extractPublicId(
+            cat.imageUrl!,
+          );
+          return this.cloudinaryService.deleteFile(publicId);
+        });
+      await Promise.all(deleteCategoriesPromises).catch((err) =>
+        console.error('Erro ao deletar imagens das categorias da loja:', err),
+      );
+    }
+
+    if (store.logoUrl) {
+      try {
+        const logoId = this.cloudinaryService.extractPublicId(store.logoUrl);
+        await this.cloudinaryService.deleteFile(logoId);
+      } catch (err) {
+        console.error('Erro ao deletar logo da loja:', err);
+      }
+    }
+
+    return await this.storesRepositorio.remove(store);
+  }
 }
