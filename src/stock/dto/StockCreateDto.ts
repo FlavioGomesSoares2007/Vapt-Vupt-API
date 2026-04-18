@@ -1,11 +1,11 @@
-import { 
-  IsNotEmpty, 
-  IsNumber, 
-  IsString, 
-  IsEnum, 
-  IsOptional, 
-  Min, 
-  MaxLength 
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsEnum,
+  IsOptional,
+  Min,
+  MaxLength,
 } from 'class-validator';
 
 export enum StockUnit {
@@ -14,23 +14,23 @@ export enum StockUnit {
   GRAMA = 'g',
   LITRO = 'l',
   MILILITRO = 'ml',
+  FATIA = 'ft',
 }
 
 export class StockCreateDto {
   @IsString()
   @IsNotEmpty({ message: 'O nome do item é obrigatório.' })
   @MaxLength(100)
-  name!: string; 
+  name!: string;
 
   @IsNumber()
   @Min(0)
   @IsNotEmpty({ message: 'A quantidade inicial deve ser informada.' })
-  quantity!: number; 
+  quantity!: number;
 
   @IsEnum(StockUnit, {
-    message: 'Unidade inválida. Use: un, kg, g, l ou ml',
+    message: 'Unidade inválida. Use: un, kg, g, ft, l ou ml',
   })
-  @IsNotEmpty()
-  unit!: StockUnit; 
-
+  @IsNotEmpty({ message: 'A unidade é obrigatorio' })
+  unit!: StockUnit;
 }

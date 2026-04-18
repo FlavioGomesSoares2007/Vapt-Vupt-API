@@ -5,9 +5,11 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { StoresEntity } from '../../stores/entities/Stores.Entity';
-import { CategoriesEntity } from '../../categories/entites/CategoriesEntity';
+import { CategoriesEntity } from '../../categories/entities/CategoriesEntity';
+import { RevenueEntity } from '../../revenue/entities/RevenueEntity';
 
 @Entity('products')
 export class ProductEntity {
@@ -39,6 +41,9 @@ export class ProductEntity {
   })
   @JoinColumn({ name: 'id_category' })
   id_category!: CategoriesEntity;
+
+  @OneToMany(() => RevenueEntity, (revenue) => revenue.id_product)
+  revenue!: RevenueEntity[];
 
   @CreateDateColumn()
   createdAt!: Date;

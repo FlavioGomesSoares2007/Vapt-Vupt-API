@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { CreateProductsDto } from './dto/ProductsCreateDto';
 import { ProductsUpdateDto } from './dto/ProductsUpdate';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { CategoriesEntity } from '../categories/entites/CategoriesEntity';
+import { CategoriesEntity } from '../categories/entities/CategoriesEntity';
 
 @Injectable()
 export class ProductsService {
@@ -66,14 +66,12 @@ export class ProductsService {
 
     return await this.productRepositorio.save(newProduct);
   }
-
   async findAll(id_store: number) {
     return await this.productRepositorio.find({
       where: { id_store: { id: id_store } },
       relations: ['id_category'], // Traz os dados da categoria junto
     });
   }
-
   async find(id: number, id_store: number) {
     const product = await this.productRepositorio.findOne({
       where: { id: id, id_store: { id: id_store } },
@@ -83,7 +81,6 @@ export class ProductsService {
     if (!product) throw new NotFoundException('Produto não encontrado.');
     return product;
   }
-
   async update(
     id_product: number,
     id_store: number,
@@ -131,7 +128,6 @@ export class ProductsService {
     Object.assign(product, dados);
     return await this.productRepositorio.save(product);
   }
-
   async delete(id_product: number, id_store: number) {
     const product = await this.productRepositorio.findOne({
       where: { id: id_product, id_store: { id: id_store } },

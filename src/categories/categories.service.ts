@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { CategoriesEntity } from './entites/CategoriesEntity';
+import { CategoriesEntity } from './entities/CategoriesEntity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryCreateDto } from './dto/CategoryCreateDto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';

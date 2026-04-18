@@ -19,7 +19,7 @@ export class StockEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   quantity!: number;
 
-  @Column({ name: 'unit', type: 'enum', enum: ['un', 'kg', 'g', 'l', 'ml'] })
+  @Column({ name: 'unit', type: 'enum', enum: ['un', 'kg', 'g', 'l', 'ml', 'ft'], nullable:true })
   unit!: string;
 
   @ManyToOne(() => StoresEntity, (stores) => stores.stock)

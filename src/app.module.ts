@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CategoriesModule } from './categories/categories.module';
 import { StockModule } from './stock/stock.module';
+import { RevenueModule } from './revenue/revenue.module';
+import { TablesModule } from './tables/tables.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { StockModule } from './stock/stock.module';
     CloudinaryModule,
     CategoriesModule,
     StockModule,
+    RevenueModule,
+    TablesModule,
   ],
 })
 export class AppModule {}

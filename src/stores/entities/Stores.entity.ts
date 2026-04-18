@@ -7,8 +7,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ProductEntity } from '../../products/entities/productEntity';
-import { CategoriesEntity } from '../../categories/entites/CategoriesEntity';
+import { CategoriesEntity } from '../../categories/entities/CategoriesEntity';
 import { StockEntity } from '../../stock/entities/StockEntity';
+import { RevenueEntity } from '../../revenue/entities/RevenueEntity';
+import { TablesEntity } from '../../tables/entities/TablesEntity';
 
 @Entity('stores')
 export class StoresEntity {
@@ -68,6 +70,12 @@ export class StoresEntity {
   @OneToMany(() => CategoriesEntity, (category) => category.id_store)
   categories!: CategoriesEntity[];
 
-  @OneToMany(()=> StockEntity, (stock)=>stock.id_stock)
-  stock!:StockEntity[]
+  @OneToMany(() => RevenueEntity, (revenue) => revenue.id_store)
+  revenue!: RevenueEntity[];
+
+  @OneToMany(() => StockEntity, (stock) => stock.id_stock)
+  stock!: StockEntity[];
+
+  @OneToMany(() => TablesEntity, (table) => table.id_store)
+  Tables!: TablesEntity[];
 }

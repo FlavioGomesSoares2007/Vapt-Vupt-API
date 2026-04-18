@@ -14,6 +14,7 @@ export enum StockUnit {
   GRAMA = 'g',
   LITRO = 'l',
   MILILITRO = 'ml',
+  FATIA = 'ft'
 }
 
 export class StockUpdateDto {
@@ -28,7 +29,7 @@ export class StockUpdateDto {
   quantity?: number; 
 
   @IsEnum(StockUnit, {
-    message: 'Unidade inválida. Use: un, kg, g, l ou ml',
+    message: 'Unidade inválida. Use: un, kg, g, ft, l ou ml',
   })
   @IsOptional()
   unit?: StockUnit; 
