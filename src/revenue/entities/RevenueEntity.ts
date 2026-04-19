@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { StoresEntity } from '../../stores/entities/Stores.Entity';
-import { ProductEntity } from '../../products/entities/productEntity';
+import { StoresEntity } from '../../store/entities/StoresEntity';
+import { ProductEntity } from '../../product/entities/productEntity';
 
 @Entity('revenue')
 export class RevenueEntity {

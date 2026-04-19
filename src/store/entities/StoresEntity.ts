@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductEntity } from '../../products/entities/productEntity';
-import { CategoriesEntity } from '../../categories/entities/CategoriesEntity';
+import { ProductEntity } from '../../product/entities/productEntity';
+import { CategoriesEntity } from '../../categorie/entities/CategoriesEntity';
 import { StockEntity } from '../../stock/entities/StockEntity';
 import { RevenueEntity } from '../../revenue/entities/RevenueEntity';
-import { TablesEntity } from '../../tables/entities/TablesEntity';
+import { TablesEntity } from '../../table/entities/TablesEntity';
 
 @Entity('stores')
 export class StoresEntity {

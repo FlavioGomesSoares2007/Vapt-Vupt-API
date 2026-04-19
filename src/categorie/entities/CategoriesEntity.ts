@@ -5,8 +5,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ProductEntity } from '../../products/entities/productEntity';
-import { StoresEntity } from '../../stores/entities/Stores.Entity';
+import { ProductEntity } from '../../product/entities/productEntity';
+import { StoresEntity } from '../../store/entities/StoresEntity';
 
 @Entity('categories')
 export class CategoriesEntity {

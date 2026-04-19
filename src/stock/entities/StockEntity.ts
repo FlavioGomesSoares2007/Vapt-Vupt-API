@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { StoresEntity } from '../../stores/entities/Stores.Entity';
+import { StoresEntity } from '../../store/entities/StoresEntity';
 
 @Entity('stock')
 export class StockEntity {
@@ -19,7 +19,12 @@ export class StockEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   quantity!: number;
 
-  @Column({ name: 'unit', type: 'enum', enum: ['un', 'kg', 'g', 'l', 'ml', 'ft'], nullable:true })
+  @Column({
+    name: 'unit',
+    type: 'enum',
+    enum: ['un', 'kg', 'g', 'l', 'ml', 'ft'],
+    nullable: true,
+  })
   unit!: string;
 
   @ManyToOne(() => StoresEntity, (stores) => stores.stock)

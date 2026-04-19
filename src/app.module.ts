@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { ProductsModule } from './products/products.module';
-import { StoresModule } from './stores/stores.module';
+import { ProductsModule } from './product/products.module';
+import { StoresModule } from './store/stores.module';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { CategoriesModule } from './categories/categories.module';
+import { CategoriesModule } from './categorie/categories.module';
 import { StockModule } from './stock/stock.module';
 import { RevenueModule } from './revenue/revenue.module';
-import { TablesModule } from './tables/tables.module';
+import { TablesModule } from './table/tables.module';
+import { KitchenModule } from './kitchen/kitchen.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { TablesModule } from './tables/tables.module';
     StockModule,
     RevenueModule,
     TablesModule,
+    KitchenModule,
   ],
 })
 export class AppModule {}

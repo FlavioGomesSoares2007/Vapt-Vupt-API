@@ -29,9 +29,9 @@ export class TablesCreateDto {
   slug!: string;
 
   @IsOptional()
-  @IsString({ message: 'O CPF deve ser uma string' })
-  @Matches(/^\d{11}$/, { message: 'O CPF deve conter apenas 11 números' })
-  cpf?: string;
+  @IsString({ message: 'A senha deve ser uma string' })
+  @MinLength(6, {message:'A senha tem que ter no minimo 6 caracteris'})
+  password?: string;
 
   @IsOptional()
   @IsEnum(TableStatus, { message: 'Status inválido' })

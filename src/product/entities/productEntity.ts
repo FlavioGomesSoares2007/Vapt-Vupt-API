@@ -7,8 +7,8 @@ import {
   CreateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { StoresEntity } from '../../stores/entities/Stores.Entity';
-import { CategoriesEntity } from '../../categories/entities/CategoriesEntity';
+import { StoresEntity } from '../../store/entities/StoresEntity';
+import { CategoriesEntity } from '../../categorie/entities/CategoriesEntity';
 import { RevenueEntity } from '../../revenue/entities/RevenueEntity';
 
 @Entity('products')

@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { StoresEntity } from '../../stores/entities/Stores.Entity';
+import { StoresEntity } from '../../store/entities/StoresEntity';
 
 @Entity('tables')
 export class TablesEntity {
@@ -24,11 +24,12 @@ export class TablesEntity {
   slug!: string;
 
   @Column({
-    name: 'cpf',
+    name: 'password',
     type: 'varchar',
     length: 100,
+    nullable: true,
   })
-  cpf!: string;
+  password!: string | null;
 
   @Column({
     name: 'status',

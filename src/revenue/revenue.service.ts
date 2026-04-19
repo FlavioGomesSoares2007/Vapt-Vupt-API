@@ -72,9 +72,7 @@ export class RevenueService {
     });
 
     if (!revenue) {
-      throw new NotFoundException(
-        'Este item de estoque não existe ou não pertence à sua loja.',
-      );
+      throw new NotFoundException('essa receita não existe.');
     }
     await this.revenueRepository.remove(revenue);
     return { message: 'Item removido com sucesso.' };

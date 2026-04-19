@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { CreateProductsDto } from './dto/ProductsCreateDto';
 import { ProductsUpdateDto } from './dto/ProductsUpdate';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { CategoriesEntity } from '../categories/entities/CategoriesEntity';
+import { CategoriesEntity } from '../categorie/entities/CategoriesEntity';
 
 @Injectable()
 export class ProductsService {
